@@ -1,0 +1,29 @@
+# Compiled object files
+*.o
+
+# Executables
+pi
+
+# Backup and temporary files
+*~
+*.swp
+*.swo
+
+# macOS files
+.DS_Store
+
+# Linux core dumps
+core
+
+# Build artifacts
+a.out
+
+# Editor / IDE directories
+.vscode/
+.idea/
+
+# Makefile-generated dependency files (if added later)
+*.d
+
+# python venv
+.env

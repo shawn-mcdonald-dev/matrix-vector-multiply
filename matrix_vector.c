@@ -8,8 +8,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+
+/* Timing macro */
+#define GET_TIME(now) {                 \
+    struct timeval t;                  \
+    gettimeofday(&t, NULL);             \
+    now = t.tv_sec + t.tv_usec / 1e6;   \
+}
 
 int main(int argc, char* argv[]) {
+    double overall_start, overall_end;
+    double compute_start, compute_end;
+    GET_TIME(overall_start);
+
     FILE *fa, *fx, *fy;
     int A_rows, A_cols;
     int x_rows, x_cols;
@@ -84,12 +96,14 @@ int main(int argc, char* argv[]) {
     fclose(fa);
     fclose(fx);
 
+    GET_TIME(compute_start);
     /* Matrix-vector multiplication */
     for (int i = 0; i < A_rows; i++) {
         for (int j = 0; j < A_cols; j++) {
             y[i] += A[i * A_cols + j] * x[j];
         }
     }
+    GET_TIME(compute_end);
 
     /* Write output vector */
     fy = fopen(argv[3], "wb");
@@ -110,6 +124,10 @@ int main(int argc, char* argv[]) {
     free(A);
     free(x);
     free(y);
+
+    GET_TIME(overall_end);
+    printf("Overall time: %f seconds\n", overall_end - overall_start);
+    printf("Compute time: %f seconds\n", compute_end - compute_start);
 
     return 0;
 }

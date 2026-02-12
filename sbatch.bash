@@ -15,14 +15,13 @@ module load slurm
 module load gcc/10.2.0
 
 # ===============================
-# USER CONFIGURATION
+# CONFIGURATION
 # ===============================
 
-DEBUG=0      # 1 = debug mode, 0 = final paper mode
-NUM_RUNS=3   # Averaging count
+DEBUG=0   # 1 = small quick test, 0 = full experiment
 
 if [ "$DEBUG" -eq 1 ]; then
-    N_VALUES=(1000 2000 4000)
+    N_VALUES=(1000 2000)
     P_VALUES=(1 2 4)
 else
     N_VALUES=(10000 20000 30000 40000)
@@ -30,38 +29,46 @@ else
 fi
 
 RESULT_FILE="results.csv"
-
-echo "N,P,run,overall_time,work_time" > $RESULT_FILE
+echo "N,P,Tp,Speedup,Efficiency" > $RESULT_FILE
 
 # ===============================
-# BEGIN EXPERIMENTS
+# EXPERIMENT LOOP
 # ===============================
 
 for N in "${N_VALUES[@]}"; do
 
-    echo "Generating matrix A and vector X for N=$N"
-
+    echo "Generating matrix for N=$N"
     ./make_matrix A.bin $N $N
     ./make_matrix X.bin $N 1
 
+    T1=0
+
     for P in "${P_VALUES[@]}"; do
 
-        for ((run=1; run<=NUM_RUNS; run++)); do
+        echo "Running N=$N P=$P"
 
-            echo "Running N=$N P=$P Run=$run"
+        OUTPUT=$(./pth_matrix_vector A.bin X.bin Y.bin $P)
 
-            OUTPUT=$(./pth_matrix_vector A.bin X.bin Y.bin $P)
+        TP=$(echo "$OUTPUT" | grep "Overall time" | awk '{print $3}')
 
-            OVERALL=$(echo "$OUTPUT" | grep "Overall time" | awk '{print $3}')
-            WORK=$(echo "$OUTPUT" | grep "Compute time" | awk '{print $3}')
+        # Ensure 6 decimal precision
+        TP=$(printf "%.6f" $TP)
 
-            echo "$N,$P,$run,$OVERALL,$WORK" >> $RESULT_FILE
+        if [ "$P" -eq 1 ]; then
+            T1=$TP
+            SPEEDUP=1.000000
+            EFFICIENCY=1.000000
+        else
+            SPEEDUP=$(awk "BEGIN {printf \"%.6f\", $T1 / $TP}")
+            EFFICIENCY=$(awk "BEGIN {printf \"%.6f\", $SPEEDUP / $P}")
+        fi
 
-        done
+        echo "$N,$P,$TP,$SPEEDUP,$EFFICIENCY" >> $RESULT_FILE
+
     done
 
     rm -f A.bin X.bin Y.bin
 
 done
 
-echo "Experiments complete."
+echo "All experiments complete."

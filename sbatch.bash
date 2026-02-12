@@ -18,7 +18,7 @@ module load gcc/10.2.0
 # CONFIGURATION
 # ===============================
 
-DEBUG=0   # 1 = small quick test, 0 = full experiment
+DEBUG=1   # 1 = quick test, 0 = full experiment
 
 if [ "$DEBUG" -eq 1 ]; then
     N_VALUES=(1000 2000)
@@ -29,7 +29,8 @@ else
 fi
 
 RESULT_FILE="results.csv"
-echo "N,P,Tp,Speedup,Efficiency" > $RESULT_FILE
+
+echo "N,P,Tp_overall,Speedup_overall,Efficiency_overall,Tp_work,Speedup_work,Efficiency_work" > $RESULT_FILE
 
 # ===============================
 # EXPERIMENT LOOP
@@ -41,7 +42,8 @@ for N in "${N_VALUES[@]}"; do
     ./make_matrix A.bin $N $N
     ./make_matrix X.bin $N 1
 
-    T1=0
+    T1_overall=0
+    T1_work=0
 
     for P in "${P_VALUES[@]}"; do
 
@@ -49,21 +51,30 @@ for N in "${N_VALUES[@]}"; do
 
         OUTPUT=$(./pth_matrix_vector A.bin X.bin Y.bin $P)
 
-        TP=$(echo "$OUTPUT" | grep "Overall time" | awk '{print $3}')
+        TP_OVERALL=$(echo "$OUTPUT" | grep "Overall time" | awk '{print $3}')
+        TP_WORK=$(echo "$OUTPUT" | grep "Compute time" | awk '{print $3}')
 
-        # Ensure 6 decimal precision
-        TP=$(printf "%.6f" $TP)
+        TP_OVERALL=$(printf "%.6f" $TP_OVERALL)
+        TP_WORK=$(printf "%.6f" $TP_WORK)
 
         if [ "$P" -eq 1 ]; then
-            T1=$TP
-            SPEEDUP=1.000000
-            EFFICIENCY=1.000000
+            T1_overall=$TP_OVERALL
+            T1_work=$TP_WORK
+
+            SPEEDUP_overall=1.000000
+            EFFICIENCY_overall=1.000000
+
+            SPEEDUP_work=1.000000
+            EFFICIENCY_work=1.000000
         else
-            SPEEDUP=$(awk "BEGIN {printf \"%.6f\", $T1 / $TP}")
-            EFFICIENCY=$(awk "BEGIN {printf \"%.6f\", $SPEEDUP / $P}")
+            SPEEDUP_overall=$(awk "BEGIN {printf \"%.6f\", $T1_overall / $TP_OVERALL}")
+            EFFICIENCY_overall=$(awk "BEGIN {printf \"%.6f\", $SPEEDUP_overall / $P}")
+
+            SPEEDUP_work=$(awk "BEGIN {printf \"%.6f\", $T1_work / $TP_WORK}")
+            EFFICIENCY_work=$(awk "BEGIN {printf \"%.6f\", $SPEEDUP_work / $P}")
         fi
 
-        echo "$N,$P,$TP,$SPEEDUP,$EFFICIENCY" >> $RESULT_FILE
+        echo "$N,$P,$TP_OVERALL,$SPEEDUP_overall,$EFFICIENCY_overall,$TP_WORK,$SPEEDUP_work,$EFFICIENCY_work" >> $RESULT_FILE
 
     done
 

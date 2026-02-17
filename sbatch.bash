@@ -49,7 +49,7 @@ for N in "${N_VALUES[@]}"; do
 
         echo "Running N=$N P=$P"
 
-        OUTPUT=$(./pth_matrix_vector A.bin X.bin Y.bin $P)
+        OUTPUT=$(./pth_matrix_vector_numa A.bin X.bin Y.bin $P)
 
         TP_OVERALL=$(echo "$OUTPUT" | grep "Overall time" | awk '{print $3}')
         TP_WORK=$(echo "$OUTPUT" | grep "Compute time" | awk '{print $3}')

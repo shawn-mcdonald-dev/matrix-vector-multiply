@@ -31,3 +31,4 @@ a.out
 
 *.csv
 plots/
+*.out

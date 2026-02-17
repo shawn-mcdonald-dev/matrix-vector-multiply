@@ -27,3 +27,7 @@ a.out
 
 # python venv
 .env
+.venv
+
+*.csv
+plots/

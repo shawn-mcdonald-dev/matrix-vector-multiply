@@ -21,7 +21,7 @@ module load gcc/10.2.0
 DEBUG=1   # 1 = quick test, 0 = full experiment
 
 if [ "$DEBUG" -eq 1 ]; then
-    N_VALUES=(1000 2000)
+    N_VALUES=(1000 2000 4000)
     P_VALUES=(1 2 4)
 else
     N_VALUES=(10000 20000 30000 40000)

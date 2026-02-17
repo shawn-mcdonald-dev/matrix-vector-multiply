@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -std=c99 -Wall -Wextra -O2
 PFLAGS  = -std=c99 -Wall -Wextra -O2 -pthread
 
-TARGETS = make_matrix print_matrix matrix_vector pth_matrix_vector pth_matrix_vector_numa
+TARGETS = make_matrix print_matrix matrix_vector pth_matrix_vector
 
 all: $(TARGETS)
 
@@ -17,9 +17,6 @@ matrix_vector: matrix_vector.c
 
 pth_matrix_vector: pth_matrix_vector.c
 	$(CC) $(PFLAGS) -o pth_matrix_vector pth_matrix_vector.c
-
-pth_matrix_vector_numa: pth_matrix_vector_numa.c
-	$(CC) $(PFLAGS) -o pth_matrix_vector_numa pth_matrix_vector_numa.c
 
 clean:
 	rm -f $(TARGETS) *.o

@@ -29,6 +29,5 @@ a.out
 .env
 .venv
 
-*.csv
-plots/
 *.out
+bad/

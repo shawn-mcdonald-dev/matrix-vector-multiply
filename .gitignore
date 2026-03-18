@@ -31,3 +31,5 @@ a.out
 
 *.out
 bad/
+*.bin
+*.csv

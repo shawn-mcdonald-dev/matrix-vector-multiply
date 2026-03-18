@@ -1,8 +1,9 @@
 CC      = gcc
 CFLAGS  = -std=c99 -Wall -Wextra -O2
 PFLAGS  = -std=c99 -Wall -Wextra -O2 -pthread
+OFLAGS  = -std=c99 -Wall -Wextra -O2 -fopenmp
 
-TARGETS = make_matrix print_matrix matrix_vector matrix_matrix pth_matrix_vector pth_matrix_matrix
+TARGETS = make_matrix print_matrix matrix_vector matrix_matrix pth_matrix_vector pth_matrix_matrix omp_matrix_matrix
 
 all: $(TARGETS)
 
@@ -23,6 +24,9 @@ pth_matrix_vector: pth_matrix_vector.c
 
 pth_matrix_matrix: pth_matrix_matrix.c
 	$(CC) $(PFLAGS) -o pth_matrix_matrix pth_matrix_matrix.c
+
+omp_matrix_matrix: omp_matrix_matrix.c
+	$(CC) $(OFLAGS) -o omp_matrix_matrix omp_matrix_matrix.c
 
 clean:
 	rm -f $(TARGETS) *.o

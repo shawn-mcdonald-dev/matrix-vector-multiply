@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -std=c99 -Wall -Wextra -O2
 PFLAGS  = -std=c99 -Wall -Wextra -O2 -pthread
 
-TARGETS = make_matrix print_matrix matrix_vector pth_matrix_vector
+TARGETS = make_matrix print_matrix matrix_vector matrix_matrix pth_matrix_vector
 
 all: $(TARGETS)
 
@@ -14,6 +14,9 @@ print_matrix: print_matrix.c
 
 matrix_vector: matrix_vector.c
 	$(CC) $(CFLAGS) -o matrix_vector matrix_vector.c
+
+matrix_matrix: matrix_matrix.c
+	$(CC) $(CFLAGS) -o matrix_matrix matrix_matrix.c
 
 pth_matrix_vector: pth_matrix_vector.c
 	$(CC) $(PFLAGS) -o pth_matrix_vector pth_matrix_vector.c

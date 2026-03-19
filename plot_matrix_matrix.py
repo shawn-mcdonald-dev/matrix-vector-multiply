@@ -24,7 +24,7 @@ plt.rcParams.update({
 # Load Data
 # =====================================================
 
-files = glob.glob("results_p*.csv")
+files = glob.glob("omp_results_p*.csv")
 
 df = pd.concat([pd.read_csv(f) for f in files])
 df = df.sort_values(["N", "P"])
